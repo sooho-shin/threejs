@@ -1,6 +1,7 @@
 import * as THREE from "three";
+import dat from "dat.gui";
 
-// ----- 주제: AxesHelper, GridHelper
+// ----- 주제: dat gui
 
 export default function example() {
   // Renderer
@@ -23,9 +24,9 @@ export default function example() {
     1000
   );
 
-  camera.position.x = 1;
-  camera.position.y = 3;
-  camera.position.z = 0;
+  // camera.position.x = 1;
+  camera.position.y = 1;
+  camera.position.z = 5;
   scene.add(camera);
 
   const ambientLight = new THREE.AmbientLight("white", 0.5);
@@ -36,25 +37,21 @@ export default function example() {
   directionalLight.position.z = 2;
   scene.add(directionalLight);
 
-  // AxesHelper
-  const axesHelper = new THREE.AxesHelper(3);
-  scene.add(axesHelper);
-
-  // GridHelper
-  const gridHelper = new THREE.GridHelper(6);
-  scene.add(gridHelper);
-
   // Mesh
   const geometry = new THREE.BoxGeometry(1, 1, 1);
   const material = new THREE.MeshStandardMaterial({
     color: "seagreen",
   });
   const mesh = new THREE.Mesh(geometry, material);
-  mesh.position.x = 2;
+
   scene.add(mesh);
 
-  camera.lookAt(mesh.position);
+  // Dat GUI
+  const gui = new dat.GUI();
+  gui.add(mesh.position, "y").min(-3).max(3).step(0.01).name("메쉬의 y 위치");
+  gui.add(camera.position, "x", -10, 10, 0.01).name("카메라 x");
 
+  camera.lookAt(mesh.position);
   // 그리기
   const clock = new THREE.Clock();
 
@@ -62,7 +59,7 @@ export default function example() {
     const time = clock.getElapsedTime();
 
     mesh.rotation.y = time;
-
+    camera.lookAt(mesh.position);
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);
   }
