@@ -1,7 +1,7 @@
 import * as THREE from "three";
-import dat from "dat.gui";
+import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 
-// ----- 주제:  group
+// ----- 주제: Geometry 기본
 
 export default function example() {
   // Renderer
@@ -23,7 +23,6 @@ export default function example() {
     0.1,
     1000
   );
-  camera.position.y = 1.5;
   camera.position.z = 4;
   scene.add(camera);
 
@@ -36,54 +35,25 @@ export default function example() {
   directionalLight.position.z = 2;
   scene.add(directionalLight);
 
+  // Controls
+  // 카메라가 마우스 따라 움직인다
+  const controls = new OrbitControls(camera, renderer.domElement);
+
   // Mesh
-  const geometry = new THREE.BoxGeometry(1, 1, 1);
+  const geometry = new THREE.BoxGeometry(1, 1, 1, 16, 16, 16);
   const material = new THREE.MeshStandardMaterial({
     color: "hotpink",
+    side: THREE.DoubleSide,
+    wireframe: true,
   });
-
-  const group1 = new THREE.Group();
-  const box1 = new THREE.Mesh(geometry, material);
-
-  const group2 = new THREE.Group();
-  // const box2 = new THREE.Mesh(geometry, material);
-  const box2 = box1.clone();
-  box2.scale.set(0.3, 0.3, 0.3);
-  group2.position.x = 2;
-
-  const group3 = new THREE.Group();
-  const box3 = box2.clone();
-  box3.scale.set(0.15, 0.15, 0.15);
-  box3.position.x = 0.5;
-
-  group3.add(box3);
-  group2.add(box2, group3);
-  group1.add(box1, group2);
-  scene.add(group1);
-
-  // AxesHelper
-  const axesHelper = new THREE.AxesHelper(3);
-  scene.add(axesHelper);
-
-  // GridHelper
-  const gridHelper = new THREE.GridHelper(6);
-  scene.add(gridHelper);
-
-  // Dat GUI
-  const gui = new dat.GUI();
-  gui.add(camera.position, "x", -5, 5, 0.1).name("카메라 X");
-  gui.add(camera.position, "y", -5, 5, 0.1).name("카메라 Y");
-  gui.add(camera.position, "z", 2, 10, 0.1).name("카메라 Z");
+  const mesh = new THREE.Mesh(geometry, material);
+  scene.add(mesh);
 
   // 그리기
   const clock = new THREE.Clock();
 
   function draw() {
     const delta = clock.getDelta();
-
-    group1.rotation.y += delta;
-    group2.rotation.y += delta;
-    group3.rotation.y += delta;
 
     renderer.render(scene, camera);
     renderer.setAnimationLoop(draw);
